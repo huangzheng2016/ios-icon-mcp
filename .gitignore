@@ -1,0 +1,15 @@
+# 工作区存放用户真实的桌面布局，属于个人隐私，不入库
+workspace/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+.smoke-venv/
+.ruff_cache/
+
+# 系统
+.DS_Store

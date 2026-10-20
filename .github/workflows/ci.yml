@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: uv sync --locked
+      - run: uv run python -m compileall -q server.py
+      - run: uvx --from ruff==0.17.1 ruff check server.py
+      - run: >-
+          uv run python -c
+          'import server; current = [[], ["a", "b"]]; planned = [[], ["b", "a"]];
+          assert server.diff_layouts(current, planned)["totals"]["moved"] == 2;
+          server.validate_layout(current)'
+
+  package:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          python-version: "3.12"
+      - run: uv build
+      - run: uvx twine check dist/*
+      - name: Install and import the wheel
+        run: |
+          uv venv .smoke-venv
+          uv pip install --python .smoke-venv/bin/python dist/*.whl
+          .smoke-venv/bin/python -c "import server; assert server.mcp.name == 'ios-icon-mcp'"

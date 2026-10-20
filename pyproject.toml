@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ios-icon-mcp"
+version = "1.0.0"
+description = "Organize your iPhone home screen from any AI client via MCP — no jailbreak, widgets preserved"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+keywords = ["ios", "iphone", "mcp", "home-screen", "pymobiledevice3"]
+dependencies = [
+    "pymobiledevice3>=11.40.1,<12",
+    "mcp>=1.12,<2",
+]
+
+[project.urls]
+Homepage = "https://github.com/huangzheng2016/ios-icon-mcp"
+Repository = "https://github.com/huangzheng2016/ios-icon-mcp"
+Issues = "https://github.com/huangzheng2016/ios-icon-mcp/issues"
+
+[project.scripts]
+ios-icon-mcp = "server:main"
+
+[tool.setuptools]
+py-modules = ["server"]
